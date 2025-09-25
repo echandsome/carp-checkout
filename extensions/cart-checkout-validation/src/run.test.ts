@@ -1,20 +1,50 @@
 import { describe, it, expect } from 'vitest';
 import { cartValidationsGenerateRun } from './run';
-import { CartValidationsGenerateRunResult, CountryCode } from "../generated/api";
+import { CartValidationsGenerateRunResult, CountryCode, BuyerJourneyStep } from "../generated/api";
 
 describe('cart checkout validation function', () => {
-  it('returns no error when shipping to non-California address with CARB non-compliant product', () => {
+  it('returns no operations when buyer journey step is not CHECKOUT_INTERACTION', () => {
     const result = cartValidationsGenerateRun({
       cart: {
         lines: [
           {
             quantity: 1,
             merchandise: {
-              __typename: "ProductVariant",
               product: {
-                metafield: {
-                  value: "true"
-                }
+                hasAnyTag: false
+              }
+            }
+          }
+        ],
+        deliveryGroups: [
+          {
+            deliveryAddress: {
+              countryCode: CountryCode.Us,
+              provinceCode: "CA"
+            }
+          }
+        ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CartInteraction
+      }
+    });
+    const expected: CartValidationsGenerateRunResult = {
+      operations: []
+    };
+
+    expect(result).toEqual(expected);
+  });
+
+  it('returns no error when shipping to non-California address with non-compliant product', () => {
+    const result = cartValidationsGenerateRun({
+      cart: {
+        lines: [
+          {
+            quantity: 1,
+            merchandise: {
+              product: {
+                hasAnyTag: false
               }
             }
           }
@@ -27,6 +57,9 @@ describe('cart checkout validation function', () => {
             }
           }
         ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
       }
     });
     const expected: CartValidationsGenerateRunResult = {
@@ -42,18 +75,15 @@ describe('cart checkout validation function', () => {
     expect(result).toEqual(expected);
   });
 
-  it('returns error when shipping to California with CARB non-compliant product', () => {
+  it('returns error when shipping to California with non-compliant product (no compliance tags)', () => {
     const result = cartValidationsGenerateRun({
       cart: {
         lines: [
           {
             quantity: 1,
             merchandise: {
-              __typename: "ProductVariant",
               product: {
-                metafield: {
-                  value: "true"
-                }
+                hasAnyTag: false
               }
             }
           }
@@ -66,6 +96,9 @@ describe('cart checkout validation function', () => {
             }
           }
         ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
       }
     });
     const expected: CartValidationsGenerateRunResult = {
@@ -86,18 +119,15 @@ describe('cart checkout validation function', () => {
     expect(result).toEqual(expected);
   });
 
-  it('returns no error when shipping to California with CARB compliant product', () => {
+  it('returns no error when shipping to California with EPA:Compliant product', () => {
     const result = cartValidationsGenerateRun({
       cart: {
         lines: [
           {
             quantity: 1,
             merchandise: {
-              __typename: "ProductVariant",
               product: {
-                metafield: {
-                  value: "false"
-                }
+                hasAnyTag: true
               }
             }
           }
@@ -110,6 +140,9 @@ describe('cart checkout validation function', () => {
             }
           }
         ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
       }
     });
     const expected: CartValidationsGenerateRunResult = {
@@ -125,16 +158,15 @@ describe('cart checkout validation function', () => {
     expect(result).toEqual(expected);
   });
 
-  it('returns no error when shipping to California with product that has no CARB metafield', () => {
+  it('returns no error when shipping to California with EPA:N/A product', () => {
     const result = cartValidationsGenerateRun({
       cart: {
         lines: [
           {
             quantity: 1,
             merchandise: {
-              __typename: "ProductVariant",
               product: {
-                metafield: null
+                hasAnyTag: true
               }
             }
           }
@@ -147,6 +179,9 @@ describe('cart checkout validation function', () => {
             }
           }
         ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
       }
     });
     const expected: CartValidationsGenerateRunResult = {
@@ -162,18 +197,15 @@ describe('cart checkout validation function', () => {
     expect(result).toEqual(expected);
   });
 
-  it('returns no error when shipping to California with CARB compliant product (value "no")', () => {
+  it('returns no error when shipping to California with California Compliant product', () => {
     const result = cartValidationsGenerateRun({
       cart: {
         lines: [
           {
             quantity: 1,
             merchandise: {
-              __typename: "ProductVariant",
               product: {
-                metafield: {
-                  value: "no"
-                }
+                hasAnyTag: true
               }
             }
           }
@@ -186,6 +218,9 @@ describe('cart checkout validation function', () => {
             }
           }
         ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
       }
     });
     const expected: CartValidationsGenerateRunResult = {
@@ -193,6 +228,133 @@ describe('cart checkout validation function', () => {
         {
           validationAdd: {
             errors: []
+          }
+        }
+      ]
+    };
+
+    expect(result).toEqual(expected);
+  });
+
+  it('returns no error when shipping to California with Non-CARB:Y product', () => {
+    const result = cartValidationsGenerateRun({
+      cart: {
+        lines: [
+          {
+            quantity: 1,
+            merchandise: {
+              product: {
+                hasAnyTag: true
+              }
+            }
+          }
+        ],
+        deliveryGroups: [
+          {
+            deliveryAddress: {
+              countryCode: CountryCode.Us,
+              provinceCode: "CA"
+            }
+          }
+        ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
+      }
+    });
+    const expected: CartValidationsGenerateRunResult = {
+      operations: [
+        {
+          validationAdd: {
+            errors: []
+          }
+        }
+      ]
+    };
+
+    expect(result).toEqual(expected);
+  });
+
+  it('returns no error when shipping to California with CustomProduct', () => {
+    const result = cartValidationsGenerateRun({
+      cart: {
+        lines: [
+          {
+            quantity: 1,
+            merchandise: {
+            }
+          }
+        ],
+        deliveryGroups: [
+          {
+            deliveryAddress: {
+              countryCode: CountryCode.Us,
+              provinceCode: "CA"
+            }
+          }
+        ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
+      }
+    });
+    const expected: CartValidationsGenerateRunResult = {
+      operations: [
+        {
+          validationAdd: {
+            errors: []
+          }
+        }
+      ]
+    };
+
+    expect(result).toEqual(expected);
+  });
+
+  it('returns error when shipping to California with mixed compliant and non-compliant products', () => {
+    const result = cartValidationsGenerateRun({
+      cart: {
+        lines: [
+          {
+            quantity: 1,
+            merchandise: {
+              product: {
+                hasAnyTag: true
+              }
+            }
+          },
+          {
+            quantity: 1,
+            merchandise: {
+              product: {
+                hasAnyTag: false
+              }
+            }
+          }
+        ],
+        deliveryGroups: [
+          {
+            deliveryAddress: {
+              countryCode: CountryCode.Us,
+              provinceCode: "CA"
+            }
+          }
+        ]
+      },
+      buyerJourney: {
+        step: BuyerJourneyStep.CheckoutInteraction
+      }
+    });
+    const expected: CartValidationsGenerateRunResult = {
+      operations: [
+        {
+          validationAdd: {
+            errors: [
+              {
+                message: "This product cannot be shipped to California due to CARB compliance restrictions. Please remove the non-compliant product or choose a different shipping address.",
+                target: "$.cart"
+              }
+            ]
           }
         }
       ]

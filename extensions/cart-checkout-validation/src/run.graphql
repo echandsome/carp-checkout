@@ -5,9 +5,7 @@ query CartValidationsGenerateRunInput {
       merchandise {
         ... on ProductVariant {
           product {
-            metafield(namespace: "custom", key: "is_carb_noncompliant") {
-              value
-            }
+            hasAnyTag(tags: ["EPA:Compliant", "EPA:N/A", "California Compliant", "Non-CARB:Y"])
           }
         }
       }
@@ -18,5 +16,8 @@ query CartValidationsGenerateRunInput {
         provinceCode
       }
     }
+  },
+  buyerJourney {
+    step
   }
 }

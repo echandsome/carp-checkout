@@ -3,9 +3,14 @@ import type {
   CartValidationsGenerateRunResult,
   ValidationError,
 } from "../generated/api";
+import { BuyerJourneyStep } from "../generated/api";
 
 export function cartValidationsGenerateRun(input: CartValidationsGenerateRunInput): CartValidationsGenerateRunResult {
   const errors: ValidationError[] = [];
+
+  if (input.buyerJourney.step !== BuyerJourneyStep.CheckoutInteraction) {
+    return { operations: [] };
+  }
 
   // Check for CARB compliance validation
   const carbErrors = checkCarbCompliance(input);
@@ -36,12 +41,17 @@ function checkCarbCompliance(input: CartValidationsGenerateRunInput): Validation
     return errors;
   }
 
-  // Check if any product in the cart is CARB non-compliant
+  // Check if any product in the cart is not California compliant
   const hasNonCompliantProducts = input.cart.lines.some(line => {
-    if (line.merchandise?.product?.metafield?.value === "true") {
-      return true;
+    // @ts-ignore
+    if (!line.merchandise.product) {
+      return false;
     }
-    return false;
+    
+    // @ts-ignore
+    const isCompliant = line.merchandise.product.hasAnyTag;
+      
+    return !isCompliant;
   });
 
   if (hasNonCompliantProducts) {
