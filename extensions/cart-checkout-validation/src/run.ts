@@ -25,15 +25,11 @@ export function cartValidationsGenerateRun(input: CartValidationsGenerateRunInpu
 function checkCarbCompliance(input: CartValidationsGenerateRunInput): ValidationError[] {
   const errors: ValidationError[] = [];
 
-  console.log(`Input: ${JSON.stringify(input)}`);
-
   // Check if any delivery group has a California address
   const hasCaliforniaAddress = input.cart.deliveryGroups.some(group => 
     group.deliveryAddress?.countryCode === "US" && 
     group.deliveryAddress?.provinceCode === "CA"
   );
-
-  console.log(`Has California address: ${hasCaliforniaAddress}`);
 
   if (!hasCaliforniaAddress) {
     // No California address, no CARB validation needed
@@ -42,13 +38,8 @@ function checkCarbCompliance(input: CartValidationsGenerateRunInput): Validation
 
   // Check if any product in the cart is CARB non-compliant
   const hasNonCompliantProducts = input.cart.lines.some(line => {
-    if (line.merchandise.__typename === "ProductVariant") {
-      const carbMetafield = line.merchandise.product.metafield;
-
-      console.log(`CARB metafield: ${JSON.stringify(carbMetafield)}`);
-
-      // If metafield exists and value is "true", it's non-compliant
-      return carbMetafield && carbMetafield.value === "true";
+    if (line.merchandise?.product?.metafield?.value === "true") {
+      return true;
     }
     return false;
   });
