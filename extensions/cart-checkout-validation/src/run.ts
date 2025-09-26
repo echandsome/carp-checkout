@@ -42,21 +42,26 @@ function checkCarbCompliance(input: CartValidationsGenerateRunInput): Validation
   }
 
   // Check if any product in the cart is not California compliant
-  const hasNonCompliantProducts = input.cart.lines.some(line => {
+  const nonCompliantProducts: string[] = [];
+  
+  input.cart.lines.forEach(line => {
     // @ts-ignore
-    if (!line.merchandise.product) {
-      return false;
-    }
-    
-    // @ts-ignore
-    const isCompliant = line.merchandise.product.hasAnyTag;
+    if (line.merchandise.product) {
+      // @ts-ignore
+      const isCompliant = line.merchandise.product.hasAnyTag;
       
-    return !isCompliant;
+      if (!isCompliant) {
+        // @ts-ignore
+        const productTitle = line.merchandise.product.title || "Unknown Product";
+        nonCompliantProducts.push(productTitle);
+      }
+    }
   });
 
-  if (hasNonCompliantProducts) {
+  if (nonCompliantProducts.length > 0) {
+    const productList = nonCompliantProducts.join(", ");
     errors.push({
-      message: "This product cannot be shipped to California due to CARB compliance restrictions. Please remove the non-compliant product or choose a different shipping address.",
+      message: `The following products cannot be shipped to California due to CARB compliance restrictions: ${productList}. Please remove these products or choose a different shipping address.`,
       target: "$.cart",
     });
   }

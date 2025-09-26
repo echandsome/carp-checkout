@@ -1,4 +1,6 @@
 {
-  "name": "cart-checkout-validation",
-  "description": "cart-checkout-validation"
+  "name": "CARB Compliance Validation",
+  "description": "Validates products for California CARB compliance during checkout",
+  "carbComplianceError": "The following products cannot be shipped to California due to CARB compliance restrictions: {productList}. Please remove these products or choose a different shipping address.",
+  "carbComplianceSuccess": "All products in your cart are compliant with California CARB regulations."
 }

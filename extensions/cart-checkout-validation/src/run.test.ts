@@ -11,6 +11,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: false
               }
             }
@@ -44,6 +45,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: false
               }
             }
@@ -83,6 +85,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: false
               }
             }
@@ -127,6 +130,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: true
               }
             }
@@ -166,6 +170,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: true
               }
             }
@@ -205,6 +210,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: true
               }
             }
@@ -244,7 +250,8 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
-                hasAnyTag: true
+                title: "Test Product",
+                hasAnyTag: true,
               }
             }
           }
@@ -319,6 +326,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: true
               }
             }
@@ -327,6 +335,7 @@ describe('cart checkout validation function', () => {
             quantity: 1,
             merchandise: {
               product: {
+                title: "Test Product",
                 hasAnyTag: false
               }
             }

@@ -5,6 +5,7 @@ query CartValidationsGenerateRunInput {
       merchandise {
         ... on ProductVariant {
           product {
+            title
             hasAnyTag(tags: ["EPA:Compliant", "EPA:N/A", "California Compliant", "Non-CARB:Y"])
           }
         }
