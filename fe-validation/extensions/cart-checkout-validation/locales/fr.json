@@ -1,0 +1,6 @@
+{
+  "carbValidationLoading": "Vérification de la conformité CARB...",
+  "carbValidationErrorTitle": "Restriction d'expédition",
+  "carbValidationSuccessTitle": "Conformité vérifiée",
+  "carbValidationSuccess": "Tous les produits de votre panier sont conformes à la Californie et peuvent être expédiés en Californie."
+}

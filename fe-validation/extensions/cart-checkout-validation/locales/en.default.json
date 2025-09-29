@@ -1,0 +1,6 @@
+{
+  "carbValidationLoading": "Checking CARB compliance...",
+  "carbValidationErrorTitle": "Shipping Restriction",
+  "carbValidationSuccessTitle": "Compliance Verified",
+  "carbValidationSuccess": "All products in your cart are California compliant and can be shipped to California."
+}
